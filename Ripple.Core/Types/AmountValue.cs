@@ -51,8 +51,7 @@ namespace Ripple.Core.Types
         {
             if (mantissa.Length > 8)
             {
-                throw new PrecisionError(
-                    "encoded mantissa must be only 8 bytes maximum");
+                throw new PrecisionException("Encoded mantissa must be only 8 bytes maximum");
             }
             return Bits.ToUInt64(mantissa, 0);
         }
@@ -111,8 +110,7 @@ namespace Ripple.Core.Types
 
             if (!match.Success)
             {
-                throw new InvalidAmountValue($"invalid value: {value}, " +
-                                             $"must match {ValueRegex}");
+                throw new InvalidAmountValueException($"Value {value} must match {ValueRegex}");
             }
 
             var signGroup = match.Groups[1];
@@ -149,7 +147,7 @@ namespace Ripple.Core.Types
             if (precision > MaxPrecision)
             {
 
-                throw new PrecisionError();
+                throw new PrecisionException();
             }
 
             return new IouValue(
@@ -212,7 +210,7 @@ namespace Ripple.Core.Types
             }
             if (exponent > MaxExponent || exponent < MinExponent)
             {
-                throw new PrecisionError();
+                throw new PrecisionException();
             }
         }
 
@@ -288,20 +286,24 @@ namespace Ripple.Core.Types
         }
     }
 
-    public class InvalidAmountValue : Exception
+    public class InvalidAmountValueException : Exception
     {
-        public InvalidAmountValue(string s) : base(s)
+        public InvalidAmountValueException()
+        {
+        }
+
+        public InvalidAmountValueException(string message) : base(message)
         {
         }
     }
 
-    public class PrecisionError : Exception
+    public class PrecisionException : Exception
     {
-        public PrecisionError()
+        public PrecisionException()
         {
         }
 
-        public PrecisionError(string message) : base(message)
+        public PrecisionException(string message) : base(message)
         {
         }
     }

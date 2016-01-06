@@ -34,7 +34,7 @@ namespace Ripple.Core.Ledger
 
             if (reader.Parser().Pos() != pos + 118)
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
             return header;
         }

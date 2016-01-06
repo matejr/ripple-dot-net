@@ -94,7 +94,7 @@
     <Compile Include="Types\Hash128.cs" />
     <Compile Include="Types\Hash160.cs" />
     <Compile Include="Types\Hash256.cs" />
-    <Compile Include="Types\InvalidJson.cs" />
+    <Compile Include="Types\InvalidJsonException.cs" />
     <Compile Include="Types\LedgerEntryType.cs" />
     <Compile Include="Types\PathSet.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

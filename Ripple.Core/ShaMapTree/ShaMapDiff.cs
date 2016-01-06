@@ -53,7 +53,7 @@ namespace Ripple.Core.ShaMapTree
                 var modded = sa.UpdateItem(mod, B.GetItem(mod).Copy());
                 if (!modded)
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException();
                 }
             }
 
@@ -63,12 +63,12 @@ namespace Ripple.Core.ShaMapTree
                 var added = sa.AddItem(add, B.GetItem(add).Copy());
                 if (!added)
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException();
                 }
             }
             if (Deleted.Select(sa.RemoveLeaf).Any(removed => !removed))
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
         }
         private void Compare(ShaMapInner a, ShaMapInner b)

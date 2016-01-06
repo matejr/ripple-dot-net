@@ -19,7 +19,7 @@ namespace Ripple.Core.Binary
             var read = _stream.Read(ret, 0, n);
             if (read != n)
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
             Cursor += n;
             return ret;

@@ -89,7 +89,7 @@ namespace Ripple.Core.Tests
         {
             if (!h1.Equals(h2))
             {
-                throw new Exception(h1 + " != " + h2);
+                throw new AssertionError(h1 + " != " + h2);
             }
         }
 
@@ -124,7 +124,7 @@ namespace Ripple.Core.Tests
                 var b = _state.Update(_reader.ReadLedgerEntry());
                 if (!b)
                 {
-                    throw new Exception();
+                    throw new AssertionError();
                 }
             }
 
@@ -134,7 +134,7 @@ namespace Ripple.Core.Tests
                 var b = _state.RemoveLeaf(_reader.ReadHash256());
                 if (!b)
                 {
-                    throw new Exception();
+                    throw new AssertionError();
                 }
             }
 
@@ -144,7 +144,7 @@ namespace Ripple.Core.Tests
                 var b = _state.Add(_reader.ReadLedgerEntry());
                 if (!b)
                 {
-                    throw new Exception();
+                    throw new AssertionError();
                 }
             }
         }
@@ -156,6 +156,17 @@ namespace Ripple.Core.Tests
             AccountStateDelta = 2,
             IndexedLedgerEntry = 3,
             IndexedTransaction = 4
+        }
+    }
+
+    internal class AssertionError : Exception
+    {
+        public AssertionError()
+        {
+        }
+
+        public AssertionError(string s) : base(s)
+        {
         }
     }
 }

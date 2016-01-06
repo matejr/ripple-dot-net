@@ -48,7 +48,7 @@ namespace Ripple.Core.ShaMapTree
             var childDepth = Depth + 1;
             if (childDepth >= 64)
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
             return new ShaMapInner(DoCoW, childDepth, Version);
         }
@@ -202,7 +202,7 @@ namespace Ripple.Core.ShaMapTree
             }
             else if (branch.IsInner)
             {
-                throw new Exception();
+                throw new InvalidOperationException();
             }
             else if (branch.IsLeaf)
             {

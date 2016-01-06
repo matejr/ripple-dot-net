@@ -42,7 +42,7 @@ namespace Ripple.Core.Transactions
             Validate(obj, errors.Add);
             if (errors.Count > 0)
             {
-                throw new Exception(string.Join("\n", errors));
+                throw new TxFormatValidationException(string.Join("\n", errors));
             }
         }
 
@@ -192,6 +192,13 @@ namespace Ripple.Core.Transactions
                     [Field.SignerEntries] = Requirement.Optional
                 }
             };
+        }
+    }
+
+    public class TxFormatValidationException : FormatException
+    {
+        public TxFormatValidationException(string msg) : base(msg)
+        {
         }
     }
 }

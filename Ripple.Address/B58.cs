@@ -38,9 +38,10 @@ namespace Ripple.Address
                     var payload = CopyOfRange(buffer, actualVersion.Length, payloadEnd);
                     return payload;
                 }
-                throw new Exception("Version invalid");
+                throw new EncodingFormatException("Version invalid");
             }
-            throw new Exception($"Expected version + payload length was {expectedTotLen} " +
+            throw new EncodingFormatException(
+                $"Expected version + payload length was {expectedTotLen} " +
                                 $"but actual length was {payloadEnd}");
         }
 
@@ -66,7 +67,7 @@ namespace Ripple.Address
                     }
                 }
             }
-            throw new Exception("No version matched amongst " +
+            throw new EncodingFormatException("No version matched amongst " +
                                 $"{string.Join(", ", versions.NamesArray)}");
         }
 
@@ -234,7 +235,7 @@ namespace Ripple.Address
                 Decode(input, version);
                 return true;
             }
-            catch (Exception)
+            catch (EncodingFormatException)
             {
                 return false;
             }
@@ -247,7 +248,7 @@ namespace Ripple.Address
                 Decode(input, version);
                 return true;
             }
-            catch (Exception)
+            catch (EncodingFormatException)
             {
                 return false;
             }
@@ -265,7 +266,7 @@ namespace Ripple.Address
         {
             if (version.ExpectedLength != buffer.Length)
             {
-                throw new Exception("version has expected " +
+                throw new EncodingFormatException("version has expected " +
                                     $"length of {version.ExpectedLength}");
             }
         }
@@ -421,13 +422,13 @@ namespace Ripple.Address
                         return VersionsArray[i];
                     }
                 }
-                throw new Exception($"Can't find version with name {sought}");
+                throw new InvalidOperationException($"Can't find version with name {sought}");
             }
         }
     }
 
     [Serializable]
-    public class EncodingFormatException : Exception
+    public class EncodingFormatException : FormatException
     {
         public EncodingFormatException()
         {

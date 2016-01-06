@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using Ripple.Core.Enums;
 
 namespace Ripple.Core.Binary
@@ -70,7 +71,7 @@ namespace Ripple.Core.Binary
             }
             else
             {
-                throw new Exception(
+                throw new InvalidOperationException(
                     "Invalid variable length indicator");
             }
 

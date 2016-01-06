@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using Ripple.Core.Enums;
 
 namespace Ripple.Core.Binary
@@ -48,7 +49,7 @@ namespace Ripple.Core.Binary
                 lenBytes[2] = (byte)(length & 0xff);
                 return TakeSome(lenBytes, 3);
             }
-            throw new Exception("Overflow error");
+            throw new InvalidOperationException($"length must <= 918745, was {length}");
         }
 
         private static byte[] TakeSome(byte[] buffer, int n)

@@ -104,7 +104,7 @@ namespace Ripple.Core.Types
         {
             if (token.Type != JTokenType.Object)
             {
-                throw new InvalidJson("{token} is not an object");
+                throw new InvalidJsonException("{token} is not an object");
             }
 
             var so = new StObject();
@@ -114,7 +114,7 @@ namespace Ripple.Core.Types
                 {
                     if (strict)
                     {
-                        throw new InvalidJson($"unknown field {pair.Key}");
+                        throw new InvalidJsonException($"unknown field {pair.Key}");
                     }
                     continue;
                 }
@@ -125,9 +125,12 @@ namespace Ripple.Core.Types
                 {
                     st = fieldForType.FromJson(jsonForField);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e is InvalidOperationException ||
+                                          e is FormatException ||
+                                          e is OverflowException ||
+                                          e is PrecisionException)
                 {
-                    throw new InvalidJson($"Can't decode `{fieldForType}` " +
+                    throw new InvalidJsonException($"Can't decode `{fieldForType}` " +
                                           $"from `{jsonForField}`", e);
                 }
                 so.Fields[fieldForType] = st;

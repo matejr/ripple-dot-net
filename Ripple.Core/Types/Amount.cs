@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json.Linq;
 using Ripple.Core.Binary;
 
@@ -61,13 +62,39 @@ namespace Ripple.Core.Types
                 case JTokenType.String:
                     return new Amount(token.ToString());
                 case JTokenType.Object:
-                    return new Amount(
-                        token["value"].ToString(),
-                        token["currency"],
-                        token["issuer"]);
+                    string value = null;
+                    string currency = null;
+                    string issuer = null;
+
+                    // we must allow property names that are not in lowercase
+                    foreach(var child in token.Children())
+                    {
+                        var p = child as JProperty;
+                        if (p == null)
+                            throw new InvalidJsonException("Invalid amount object.");
+
+                        if (p.Name.Equals("value", StringComparison.OrdinalIgnoreCase))
+                            value = p.Value.ToString();
+                        else if (p.Name.Equals("currency", StringComparison.OrdinalIgnoreCase))
+                            currency = p.Value.ToString();
+                        else if (p.Name.Equals("issuer", StringComparison.OrdinalIgnoreCase))
+                            issuer = p.Value.ToString();
+                        else
+                            throw new InvalidJsonException($"Unexpected field `{p.Name}`");
+                    }
+
+                    if (value == null)
+                        throw new InvalidJsonException("Amount object must contain property `value`");
+
+                    if(currency == null)
+                        throw new InvalidJsonException("Amount object must contain property `currency`");
+
+                    if (issuer == null)
+                        throw new InvalidJsonException("Amount object must contain property `issuer`");
+
+                    return new Amount(value.ToString(), currency, issuer);
                 default:
-                    throw new InvalidJson("Can not create " +
-                                          $"amount from `{token}`");
+                    throw new InvalidJsonException("Can not create Amount from `{token}`");
             }
         }
 

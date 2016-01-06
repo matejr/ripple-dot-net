@@ -80,14 +80,14 @@ namespace Ripple.Core.Tests
 
         }
 
-        [ExpectedException(typeof(PrecisionError)),
+        [ExpectedException(typeof(PrecisionException)),
          TestMethod()]
         public void PrecisionTest()
         {
             IouValue.FromString("1234" + "1234" + "1234" + "1234" + 1);
         }
 
-        [ExpectedException(typeof(InvalidAmountValue)),
+        [ExpectedException(typeof(InvalidAmountValueException)),
          TestMethod()]
         public void InvalidAmountValueTest()
         {

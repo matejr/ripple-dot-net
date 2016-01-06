@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics.Contracts;
 using Newtonsoft.Json.Linq;
 using Ripple.Core.Binary;
 using Ripple.Core.Util;
@@ -9,11 +9,7 @@ namespace Ripple.Core.Types
     {
         public Hash160(byte[] buffer) : base(buffer)
         {
-            if (buffer.Length != 20)
-            {
-                throw new Exception("buffer should be 20 bytes");
-            }
-
+            Contract.Assert(buffer.Length == 20, "buffer should be 20 bytes");
         }
         public static Hash160 FromJson(JToken token)
         {

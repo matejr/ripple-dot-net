@@ -57,83 +57,285 @@ namespace Ripple.TxSigning.Tests
             Assert.AreEqual(ExpectedHash, signed.Hash);
             Assert.AreEqual(ExpectedTxBlob, signed.TxBlob);
         }
+
+        /*
+
+        Notes re: test fixtures
+
+        We test that we can recreate the second transaction submitted here, which
+        was signed with an ed25519 key and has deterministic signature, more
+        friendly for testing purposes. At the time of writing rippled didn't yet
+        support rfc6979 deterministic signatures for secp256k1.
+
+        ➜  rippled git:(develop) ✗ build/clang.debug/rippled submit masterpassphrase '
+                    {"TransactionType" : "Payment",  
+                     "Amount" : "1000000000", 
+                     "Destination" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN", 
+                     "Account" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"}'
+
+        Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
+        Connecting to 127.0.0.1:5005
+        {
+           "result" : {
+              "engine_result" : "tesSUCCESS",
+              "engine_result_code" : 0,
+              "engine_result_message" : "The transaction was applied. Only final in a validated ledger.",
+              "status" : "success",
+              "tx_blob" : "1200002280000000240000000161400000003B9ACA0068400000000000000A73210330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD02074473045022100D6744E1234FCDF3C022F5F910B8609D39D745379D68D4C27AF4F077D361377A102202AF52E5C762F6E507E7CEC3E947D24638E01628CFE2CD70279176CC87309F3E78114B5F762798A53D543A014CAF8B297CFF8F2F937E88314C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D1",
+              "tx_json" : {
+                 "Account" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+                 "Amount" : "1000000000",
+                 "Destination" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN",
+                 "Fee" : "10",
+                 "Flags" : 2147483648,
+                 "Sequence" : 1,
+                 "SigningPubKey" : "0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020",
+                 "TransactionType" : "Payment",
+                 "TxnSignature" : "3045022100D6744E1234FCDF3C022F5F910B8609D39D745379D68D4C27AF4F077D361377A102202AF52E5C762F6E507E7CEC3E947D24638E01628CFE2CD70279176CC87309F3E7",
+                 "hash" : "4E15DC0DA7C7DD057D4BF6EE2D8B104644F7E5F93B0740523313108F2C58C782"
+              }
+           }
+        }
+
+        ➜  rippled git:(develop) ✗ build/clang.debug/rippled ledger_accept                                                                                       
+        Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
+        Connecting to 127.0.0.1:5005
+        {
+           "result" : {
+              "ledger_current_index" : 4,
+              "status" : "success"
+           }
+        }
+
+
+        ➜  rippled git:(develop) ✗ build/clang.debug/rippled submit 120000228000000024000000016140000000000003E868400000000000000A7321EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D7440C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE63038114C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D18314B5F762798A53D543A014CAF8B297CFF8F2F937E8
+        Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
+        Connecting to 127.0.0.1:5005
+        {
+           "result" : {
+              "engine_result" : "tesSUCCESS",
+              "engine_result_code" : 0,
+              "engine_result_message" : "The transaction was applied. Only final in a validated ledger.",
+              "status" : "success",
+              "tx_blob" : "120000228000000024000000016140000000000003E868400000000000000A7321EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D7440C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE63038114C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D18314B5F762798A53D543A014CAF8B297CFF8F2F937E8",
+              "tx_json" : {
+                 "Account" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN",
+                 "Amount" : "1000",
+                 "Destination" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+                 "Fee" : "10",
+                 "Flags" : 2147483648,
+                 "Sequence" : 1,
+                 "SigningPubKey" : "EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D",
+                 "TransactionType" : "Payment",
+                 "TxnSignature" : "C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE6303",
+                 "hash" : "A8A9C869671D35A18DFB69AFB7741062DF43F73C8A5942AD94EE58ED31477AC6"
+              }
+           }
+        }
+
+
+    */
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonMissingAccountFieldTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Fee = "100", Sequence = 10 }));
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonMissingFeeFieldTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Sequence = 10 }));
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonMissingSequenceFieldTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100" }));
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonInvalidFieldTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10, InvalidField = 100 }));
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonInvalidAccountFormatTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "rINVALID";
+
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10 }));
+        }
+
+        [TestMethod]
+        public void SignJsonValidMinimalAccountSetTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+
+            var r = signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10 }));
+
+            Assert.IsNotNull(r);
+        }
+
+        [TestMethod]
+        public void SignJsonMinimalPaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = "100000",
+            });
+
+            var r = signer.SignJson(json);
+
+            Assert.IsNotNull(r);
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonXrpAmountTooLargePaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = "10000000000000000000000000000000000000000",
+            });
+
+            var r = signer.SignJson(json);
+
+            Assert.IsNotNull(r);
+        }
+
+        [TestMethod]
+        public void SignJsonValidIouAmountInPaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { Value = "100000", Currency = "USD", Issuer = account },
+            });
+
+            var r = signer.SignJson(json);
+
+            Assert.IsNotNull(r);
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonAmountObjectHasCounterpartyInsteadOfIssuerInPaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { Value = "100000", Currency = "USD", Counterparty = account },
+            });
+
+            var r = signer.SignJson(json);
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonAmountObjectHasExtraFieldInPaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { Value = "100000", Currency = "USD", Issuer = account, ExtraField = 1234 },
+            });
+
+            var r = signer.SignJson(json);
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonValuePrecisionTooHighInPaymentTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { Value = "123456789012345678", Currency = "USD", Issuer = account },
+            });
+
+            var r = signer.SignJson(json);
+        }
+
+        [TestMethod]
+        public void SignJsonAmountFieldNamesInLowercaseInPaymentTransactionTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { value = "100000", currency = "USD", issuer = account },
+            });
+
+            var r = signer.SignJson(json);
+        }
     }
-
-    /*
-
-    Notes re: test fixtures
-
-    We test that we can recreate the second transaction submitted here, which
-    was signed with an ed25519 key and has deterministic signature, more
-    friendly for testing purposes. At the time of writing rippled didn't yet
-    support rfc6979 deterministic signatures for secp256k1.
-
-    ➜  rippled git:(develop) ✗ build/clang.debug/rippled submit masterpassphrase '
-                {"TransactionType" : "Payment",  
-                 "Amount" : "1000000000", 
-                 "Destination" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN", 
-                 "Account" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"}'
-
-    Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
-    Connecting to 127.0.0.1:5005
-    {
-       "result" : {
-          "engine_result" : "tesSUCCESS",
-          "engine_result_code" : 0,
-          "engine_result_message" : "The transaction was applied. Only final in a validated ledger.",
-          "status" : "success",
-          "tx_blob" : "1200002280000000240000000161400000003B9ACA0068400000000000000A73210330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD02074473045022100D6744E1234FCDF3C022F5F910B8609D39D745379D68D4C27AF4F077D361377A102202AF52E5C762F6E507E7CEC3E947D24638E01628CFE2CD70279176CC87309F3E78114B5F762798A53D543A014CAF8B297CFF8F2F937E88314C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D1",
-          "tx_json" : {
-             "Account" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
-             "Amount" : "1000000000",
-             "Destination" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN",
-             "Fee" : "10",
-             "Flags" : 2147483648,
-             "Sequence" : 1,
-             "SigningPubKey" : "0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020",
-             "TransactionType" : "Payment",
-             "TxnSignature" : "3045022100D6744E1234FCDF3C022F5F910B8609D39D745379D68D4C27AF4F077D361377A102202AF52E5C762F6E507E7CEC3E947D24638E01628CFE2CD70279176CC87309F3E7",
-             "hash" : "4E15DC0DA7C7DD057D4BF6EE2D8B104644F7E5F93B0740523313108F2C58C782"
-          }
-       }
-    }
-
-    ➜  rippled git:(develop) ✗ build/clang.debug/rippled ledger_accept                                                                                       
-    Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
-    Connecting to 127.0.0.1:5005
-    {
-       "result" : {
-          "ledger_current_index" : 4,
-          "status" : "success"
-       }
-    }
-
-
-    ➜  rippled git:(develop) ✗ build/clang.debug/rippled submit 120000228000000024000000016140000000000003E868400000000000000A7321EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D7440C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE63038114C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D18314B5F762798A53D543A014CAF8B297CFF8F2F937E8
-    Loading: "/Users/redacted/rippled/rippled/rippled.cfg"
-    Connecting to 127.0.0.1:5005
-    {
-       "result" : {
-          "engine_result" : "tesSUCCESS",
-          "engine_result_code" : 0,
-          "engine_result_message" : "The transaction was applied. Only final in a validated ledger.",
-          "status" : "success",
-          "tx_blob" : "120000228000000024000000016140000000000003E868400000000000000A7321EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D7440C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE63038114C0A5ABEF242802EFED4B041E8F2D4A8CC86AE3D18314B5F762798A53D543A014CAF8B297CFF8F2F937E8",
-          "tx_json" : {
-             "Account" : "rJZdUusLDtY9NEsGea7ijqhVrXv98rYBYN",
-             "Amount" : "1000",
-             "Destination" : "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
-             "Fee" : "10",
-             "Flags" : 2147483648,
-             "Sequence" : 1,
-             "SigningPubKey" : "EDD3993CDC6647896C455F136648B7750723B011475547AF60691AA3D7438E021D",
-             "TransactionType" : "Payment",
-             "TxnSignature" : "C3646313B08EED6AF4392261A31B961F10C66CB733DB7F6CD9EAB079857834C8B0334270A2C037E63CDCCC1932E0832882B7B7066ECD2FAEDEB4A83DF8AE6303",
-             "hash" : "A8A9C869671D35A18DFB69AFB7741062DF43F73C8A5942AD94EE58ED31477AC6"
-          }
-       }
-    }
-
-
-*/
 }
+

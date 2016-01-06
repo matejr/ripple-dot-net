@@ -25,13 +25,36 @@ namespace Ripple.TxSigning
             this(Seed.FromBase58(secret).KeyPair())
         {
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidTransactionException">Thrown when provided Json transaction is not valid.</exception>
         public SignedTx SignJson(JObject tx)
         {
-            var so = StObject.FromJson(tx, strict: true);
+            StObject so;
+
+            try
+            {
+                so = StObject.FromJson(tx, strict: true);
+            } catch(InvalidJsonException ex)
+            {
+                throw new InvalidTransactionException("Transaction is not valid.", nameof(tx), ex);
+            }
+
             SetCanonicalSigFlag(so);
             so[Field.SigningPubKey] = _keyPair.CanonicalPubBytes();
             so[Field.TxnSignature] = _keyPair.Sign(so.SigningData());
-            TxFormat.Validate(so);
+
+            try
+            { 
+                TxFormat.Validate(so);
+            } catch(TxFormatValidationException ex)
+            {
+                throw new InvalidTransactionException("Transaction is not valid.", nameof(tx), ex);
+            }
 
             var blob = so.ToBytes();
             var hash = Utils.TransactionId(blob);

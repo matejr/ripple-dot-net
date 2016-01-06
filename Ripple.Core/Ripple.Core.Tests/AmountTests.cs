@@ -8,7 +8,7 @@ namespace Ripple.Core.Tests
     public class AmountTests
     {
         [TestMethod()]
-        [ExpectedException(typeof(InvalidJson))]
+        [ExpectedException(typeof(InvalidJsonException))]
         public void TestInvalidJToken()
         {
             var token = JToken.Parse("[1,2,3]");

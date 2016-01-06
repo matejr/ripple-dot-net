@@ -15,7 +15,7 @@ namespace Ripple.Core.Tests
     [TestClass]
     public class TxFormatTests
     {
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod, ExpectedException(typeof(TxFormatValidationException))]
         public void MissingFieldsTest()
         {
             var so = new StObject
@@ -44,7 +44,7 @@ namespace Ripple.Core.Tests
             // But if we set the amount to null
             so[Field.Amount] = null;
 
-            AssertException(() =>
+            AssertTxFormatException(() =>
             {
                 TxFormat.Validate(so);
             }, "`Amount` is set to null");
@@ -53,7 +53,7 @@ namespace Ripple.Core.Tests
         [TestMethod]
         public void MissingTransactionTypeTest()
         {
-            AssertException(() => {
+            AssertTxFormatException(() => {
                 TxFormat.Validate(new StObject());
             }, "Missing `TransactionType` field");
         }
@@ -61,14 +61,14 @@ namespace Ripple.Core.Tests
         [TestMethod]
         public void NullTransactionTypeTest()
         {
-            AssertException(() => {
+            AssertTxFormatException(() => {
                 TxFormat.Validate(new StObject {[Field.TransactionType] = null});
             }, "`TransactionType` is set to null");
         }
 
-        public static void AssertException(Action a, string messagePattern=null)
+        public static void AssertTxFormatException(Action a, string messagePattern=null)
         {
-            AssertException<Exception>(a, messagePattern);
+            AssertException<TxFormatValidationException>(a, messagePattern);
         }
 
         public static void AssertException<T> (Action a, string messagePattern=null) where T: Exception
