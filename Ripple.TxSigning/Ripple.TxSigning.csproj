@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
-    <Compile Include="InvalidTransactionException.cs" />
+    <Compile Include="InvalidTxException.cs" />
     <Compile Include="SignedTx.cs" />
     <Compile Include="TxSigner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

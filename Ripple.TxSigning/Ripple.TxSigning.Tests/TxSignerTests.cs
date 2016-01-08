@@ -136,7 +136,7 @@ namespace Ripple.TxSigning.Tests
 
     */
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonMissingAccountPropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -144,7 +144,7 @@ namespace Ripple.TxSigning.Tests
             signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Fee = "100", Sequence = 10 }));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonMissingFeePropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -153,7 +153,7 @@ namespace Ripple.TxSigning.Tests
             signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Sequence = 10 }));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonMissingSequencePropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -162,7 +162,7 @@ namespace Ripple.TxSigning.Tests
             signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100" }));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonInvalidPropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -171,7 +171,7 @@ namespace Ripple.TxSigning.Tests
             signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10, InvalidProperty = 100 }));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonInvalidAccountFormatTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -213,7 +213,7 @@ namespace Ripple.TxSigning.Tests
             Assert.IsNotNull(r);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonXrpAmountTooLargePaymentTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -257,7 +257,7 @@ namespace Ripple.TxSigning.Tests
             Assert.IsNotNull(r);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonAmountHasPascalCasePropertiesTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -277,7 +277,7 @@ namespace Ripple.TxSigning.Tests
             var r = signer.SignJson(json);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonAmountObjectHasCounterpartyInsteadOfIssuerInPaymentTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -297,7 +297,7 @@ namespace Ripple.TxSigning.Tests
             var r = signer.SignJson(json);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonAmountObjectHasExtraPropertyInPaymentTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
@@ -317,7 +317,7 @@ namespace Ripple.TxSigning.Tests
             var r = signer.SignJson(json);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        [TestMethod, ExpectedException(typeof(InvalidTxException))]
         public void SignJsonValuePrecisionTooHighInPaymentTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");

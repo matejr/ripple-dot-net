@@ -31,7 +31,7 @@ namespace Ripple.TxSigning
         /// </summary>
         /// <param name="tx"></param>
         /// <returns></returns>
-        /// <exception cref="InvalidTransactionException">Thrown when provided Json transaction is not valid.</exception>
+        /// <exception cref="InvalidTxException">Thrown when provided Json transaction is not valid.</exception>
         public SignedTx SignJson(JObject tx)
         {
             StObject so;
@@ -41,7 +41,7 @@ namespace Ripple.TxSigning
                 so = StObject.FromJson(tx, strict: true);
             } catch(InvalidJsonException ex)
             {
-                throw new InvalidTransactionException("Transaction is not valid.", nameof(tx), ex);
+                throw new InvalidTxException("Transaction is not valid.", nameof(tx), ex);
             }
 
             SetCanonicalSigFlag(so);
@@ -53,7 +53,7 @@ namespace Ripple.TxSigning
                 TxFormat.Validate(so);
             } catch(TxFormatValidationException ex)
             {
-                throw new InvalidTransactionException("Transaction is not valid.", nameof(tx), ex);
+                throw new InvalidTxException("Transaction is not valid.", nameof(tx), ex);
             }
 
             var blob = so.ToBytes();
