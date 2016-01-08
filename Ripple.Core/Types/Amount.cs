@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using Ripple.Core.Binary;
 
@@ -62,37 +63,32 @@ namespace Ripple.Core.Types
                 case JTokenType.String:
                     return new Amount(token.ToString());
                 case JTokenType.Object:
-                    string value = null;
-                    string currency = null;
-                    string issuer = null;
+                    var valueToken = token["value"];
+                    var currencyToken = token["currency"];
+                    var issuerToken = token["issuer"];
 
-                    // we must allow property names that are not in lowercase
-                    foreach(var child in token.Children())
-                    {
-                        var p = child as JProperty;
-                        if (p == null)
-                            throw new InvalidJsonException("Invalid amount object.");
+                    if (valueToken == null)
+                        throw new InvalidJsonException("Amount object must contain property `value`.");
 
-                        if (p.Name.Equals("value", StringComparison.OrdinalIgnoreCase))
-                            value = p.Value.ToString();
-                        else if (p.Name.Equals("currency", StringComparison.OrdinalIgnoreCase))
-                            currency = p.Value.ToString();
-                        else if (p.Name.Equals("issuer", StringComparison.OrdinalIgnoreCase))
-                            issuer = p.Value.ToString();
-                        else
-                            throw new InvalidJsonException($"Unexpected field `{p.Name}`");
-                    }
+                    if (currencyToken == null)
+                        throw new InvalidJsonException("Amount object must contain property `currency`.");
 
-                    if (value == null)
-                        throw new InvalidJsonException("Amount object must contain property `value`");
+                    if (issuerToken == null)
+                        throw new InvalidJsonException("Amount object must contain property `issuer`.");
 
-                    if(currency == null)
-                        throw new InvalidJsonException("Amount object must contain property `currency`");
+                    if (token.Children().Count() > 3)
+                        throw new InvalidJsonException("Amount object has too many properties.");
 
-                    if (issuer == null)
-                        throw new InvalidJsonException("Amount object must contain property `issuer`");
+                    if(valueToken.Type != JTokenType.String)
+                        throw new InvalidJsonException("Property `value` must be string.");
 
-                    return new Amount(value.ToString(), currency, issuer);
+                    if (currencyToken.Type != JTokenType.String)
+                        throw new InvalidJsonException("Property `currency` must be string.");
+
+                    if (issuerToken.Type != JTokenType.String)
+                        throw new InvalidJsonException("Property `issuer` must be string.");
+
+                    return new Amount((string)valueToken, (string)currencyToken, (string)issuerToken);
                 default:
                     throw new InvalidJsonException("Can not create Amount from `{token}`");
             }

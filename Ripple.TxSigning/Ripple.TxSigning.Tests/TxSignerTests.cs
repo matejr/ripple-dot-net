@@ -137,7 +137,7 @@ namespace Ripple.TxSigning.Tests
     */
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
-        public void SignJsonMissingAccountFieldTest()
+        public void SignJsonMissingAccountPropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
 
@@ -145,7 +145,7 @@ namespace Ripple.TxSigning.Tests
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
-        public void SignJsonMissingFeeFieldTest()
+        public void SignJsonMissingFeePropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
             var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
@@ -154,7 +154,7 @@ namespace Ripple.TxSigning.Tests
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
-        public void SignJsonMissingSequenceFieldTest()
+        public void SignJsonMissingSequencePropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
             var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
@@ -163,12 +163,12 @@ namespace Ripple.TxSigning.Tests
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
-        public void SignJsonInvalidFieldTest()
+        public void SignJsonInvalidPropertyTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
             var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
 
-            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10, InvalidField = 100 }));
+            signer.SignJson(JObject.FromObject(new { TransactionType = "AccountSet", Account = account, Fee = "100", Sequence = 10, InvalidProperty = 100 }));
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
@@ -249,12 +249,32 @@ namespace Ripple.TxSigning.Tests
                 Destination = destinationAccount,
                 Fee = "100",
                 Sequence = 10,
-                Amount = new { Value = "100000", Currency = "USD", Issuer = account },
+                Amount = new { value = "100000", currency = "USD", issuer = account },
             });
 
             var r = signer.SignJson(json);
 
             Assert.IsNotNull(r);
+        }
+
+        [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
+        public void SignJsonAmountHasPascalCasePropertiesTransactionTest()
+        {
+            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
+            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
+            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
+
+            var json = JObject.FromObject(new
+            {
+                TransactionType = "Payment",
+                Account = account,
+                Destination = destinationAccount,
+                Fee = "100",
+                Sequence = 10,
+                Amount = new { Value = "100000", Currency = "USD", Issuer = account },
+            });
+
+            var r = signer.SignJson(json);
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
@@ -271,14 +291,14 @@ namespace Ripple.TxSigning.Tests
                 Destination = destinationAccount,
                 Fee = "100",
                 Sequence = 10,
-                Amount = new { Value = "100000", Currency = "USD", Counterparty = account },
+                Amount = new { value = "100000", currency = "USD", counterparty = account },
             });
 
             var r = signer.SignJson(json);
         }
 
         [TestMethod, ExpectedException(typeof(InvalidTransactionException))]
-        public void SignJsonAmountObjectHasExtraFieldInPaymentTransactionTest()
+        public void SignJsonAmountObjectHasExtraPropertyInPaymentTransactionTest()
         {
             var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
             var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
@@ -291,7 +311,7 @@ namespace Ripple.TxSigning.Tests
                 Destination = destinationAccount,
                 Fee = "100",
                 Sequence = 10,
-                Amount = new { Value = "100000", Currency = "USD", Issuer = account, ExtraField = 1234 },
+                Amount = new { value = "100000", currency = "USD", issuer = account, extra = 1234 },
             });
 
             var r = signer.SignJson(json);
@@ -311,27 +331,7 @@ namespace Ripple.TxSigning.Tests
                 Destination = destinationAccount,
                 Fee = "100",
                 Sequence = 10,
-                Amount = new { Value = "123456789012345678", Currency = "USD", Issuer = account },
-            });
-
-            var r = signer.SignJson(json);
-        }
-
-        [TestMethod]
-        public void SignJsonAmountFieldNamesInLowercaseInPaymentTransactionTransactionTest()
-        {
-            var signer = TxSigner.FromSecret("snR7czZRBW5tRPTNsnhS1UpY3vx5X");
-            var account = "r99V1djgizxfcscPUpUbbR2C2akai7UXDe";
-            var destinationAccount = "rQ3rK7n7wy9GrDnT221wDVXxVGoGi95jyz";
-
-            var json = JObject.FromObject(new
-            {
-                TransactionType = "Payment",
-                Account = account,
-                Destination = destinationAccount,
-                Fee = "100",
-                Sequence = 10,
-                Amount = new { value = "100000", currency = "USD", issuer = account },
+                Amount = new { value = "123456789012345678", currency = "USD", issuer = account },
             });
 
             var r = signer.SignJson(json);
